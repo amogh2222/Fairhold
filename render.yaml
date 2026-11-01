@@ -4,9 +4,9 @@ services:
     env: node
     plan: free
     region: oregon
-    buildCommand: npm install --legacy-peer-deps && (DATABASE_URL="${DATABASE_URL:-postgresql://postgres:postgres@localhost:5432/fairhold}" npx prisma generate) && npm run build
-    startCommand: (npx prisma db push --skip-generate || true) && npm start
-    healthCheckPath: /api/auth/me
+    buildCommand: npm install --legacy-peer-deps && npx prisma generate && npm run build
+    startCommand: npm start
+    healthCheckPath: /api/health
     envVars:
       - key: NODE_ENV
         value: production
