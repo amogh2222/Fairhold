@@ -34,3 +34,4 @@ This document records technical decisions made during the design and implementat
 ## Decision 7: Multi-Provider AI Architecture via Vercel AI SDK
 - **Context**: Project requires Google Gemini by default (`@ai-sdk/google`) and Anthropic Claude (`@ai-sdk/anthropic`) as an alternative, controlled via `LLM_PROVIDER`.
 - **Decision**: Utilize Vercel AI SDK's unified `generateObject` and `generateText` with `zod` schemas and temperature 0. Vision tasks pass image URLs or base64 buffers directly. Normalized bounding boxes use the vision model's native `[ymin, xmin, ymax, xmax]` coordinate system (0-1000 scale) mapped to SVG overlay coordinates.
+

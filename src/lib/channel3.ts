@@ -141,3 +141,4 @@ function getCuratedMarketData(itemName: string): Channel3ProductResult[] {
     { title: `${itemName} (Standard Retail)`, price: 499.0, condition: "New", merchant: "Authorized Retailer" },
   ];
 }
+

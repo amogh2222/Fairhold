@@ -65,3 +65,4 @@ export async function POST(req: Request, { params }: { params: Promise<{ booking
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
+

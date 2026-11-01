@@ -118,3 +118,4 @@ fs.writeFileSync(
 );
 
 console.log("Generated demo inspection photos in public/demo-photos/sony-a7iv/");
+

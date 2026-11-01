@@ -282,3 +282,4 @@ model JobQueue {
   createdAt  DateTime  @default(now())
   updatedAt  DateTime  @updatedAt
 }
+

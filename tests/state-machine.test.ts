@@ -45,3 +45,4 @@ describe("Booking State Machine Transitions", () => {
     expect(canTransition("CHECKED_OUT", "SETTLED")).toBe(false);
   });
 });
+

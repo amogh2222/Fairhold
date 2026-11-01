@@ -83,3 +83,4 @@ export function validateRentalDuration(startDate: Date, endDate: Date): {
 
   return { valid: true, days };
 }
+

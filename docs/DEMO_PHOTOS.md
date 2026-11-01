@@ -56,3 +56,4 @@ For instant zero-setup demonstration:
 2. Click **"Load Demo Photos"** in the top-right toolbar.
 3. Select between **"New Damage Scenario"**, **"Dust Only Scenario"**, or **"Pre-Existing Mark Scenario"**.
 4. The photos are instantly loaded into the AI inspection pipeline!
+

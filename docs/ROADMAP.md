@@ -39,3 +39,4 @@ This document outlines the post-hackathon vision and technical milestones for Fa
 2. **Decentralized Reputation Protocol**:
    - Portable renter condition scores based on verified on-time returns with zero damage.
    - Renters with perfect 5-star condition records qualify for zero-deposit rentals backed by Fairhold micro-guarantees.
+

@@ -84,3 +84,4 @@ To receive asynchronous PayPal payment events in real time:
 4. Fairhold correlates the dispute to the rental case file via `seller_transaction_id`.
 5. Click **Submit PDF Dossier**: Fairhold compiles timestamped photos, the signed checkout agreement, and deterministic math into an evidence PDF and uploads it to PayPal's Disputes API.
 6. Click **Win (Seller)** to test PayPal's Sandbox Adjudication API in seller favor!
+

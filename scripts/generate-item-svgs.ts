@@ -123,3 +123,4 @@ for (const item of items) {
 }
 
 console.log("Generated 8 SVG rental item illustrations.");
+
