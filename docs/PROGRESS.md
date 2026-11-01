@@ -72,3 +72,9 @@
 - [x] `docs/ROADMAP.md`
 - [x] `render.yaml` for Render Web Service + Postgres + Background Worker
 - [x] End-to-end verification of judge path
+
+### 6. Deployment & Infrastructure
+- [x] Render Blueprint (`render.yaml`) with 100% Free Tier (`plan: free`) for web service and database
+- [x] Node.js 20.18.0 LTS environment lock via `.node-version`
+- [x] V8 memory optimization (`--max-old-space-size=2048`) and single-core webpack compilation for 512MB RAM constraints
+- [x] Safe Prisma client generation fallback for initial deployment provisioning

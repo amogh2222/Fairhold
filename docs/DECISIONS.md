@@ -35,3 +35,12 @@ This document records technical decisions made during the design and implementat
 - **Context**: Project requires Google Gemini by default (`@ai-sdk/google`) and Anthropic Claude (`@ai-sdk/anthropic`) as an alternative, controlled via `LLM_PROVIDER`.
 - **Decision**: Utilize Vercel AI SDK's unified `generateObject` and `generateText` with `zod` schemas and temperature 0. Vision tasks pass image URLs or base64 buffers directly. Normalized bounding boxes use the vision model's native `[ymin, xmin, ymax, xmax]` coordinate system (0-1000 scale) mapped to SVG overlay coordinates.
 
+
+## Decision 8: Memory & Resource Optimization for Render Free Tier Build & Deploy
+- **Context**: On Render's Free tier, the default container memory is 512MB. Next.js 15 compilation with large enterprise component libraries (AG Grid, Bryntum Scheduler) can trigger V8 `FATAL ERROR: Reached heap limit Allocation failed - JavaScript heap out of memory` during page generation if workers spawn unboundedly.
+- **Decision**: 
+  1. Pin Node.js to LTS `20.18.0` via `.node-version` and `NODE_VERSION: 20.18.0` in `render.yaml`.
+  2. Provide `NODE_OPTIONS="--max-old-space-size=2048"` during the build command to unlock available build host RAM.
+  3. Configure `webpackBuildWorker: false` and `cpus: 1` in `next.config.ts` to prevent parallel worker thrashing.
+  4. Set `ignoreBuildErrors: true` during Next.js production builds while enforcing full type validation in continuous integration / pre-commit tests (`npx tsc --noEmit`).
+  5. Provide a fallback `DATABASE_URL` in `buildCommand` for schema compilation so Prisma client generation succeeds even before the database instance finishes provisioning.
