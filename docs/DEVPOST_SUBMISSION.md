@@ -107,3 +107,4 @@ Fairhold replaces subjective rental deposit disputes with an automated, transpar
 
 ### Built With (Devpost Tags)
 `paypal`, `paypal-developer`, `ai`, `gemini-api`, `next.js`, `typescript`, `ag-grid`, `bryntum`, `render`, `channel3`, `tailwind-css`, `prisma`, `pdf-lib`, `vitest`
+

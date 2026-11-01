@@ -85,3 +85,4 @@ This script gives you an exact, second-by-second walkthrough to record your 2-mi
 > *"Finally, if a dispute is ever opened, Fairhold correlates it to the rental case file, generates a tamper-evident evidence PDF citing verified photo hashes and signed timestamps, and submits it directly to PayPal's Disputes API. With our sandbox tools, we can adjudicate disputes in seconds.*
 >
 > *Fairhold is deployed on Render via an infrastructure blueprint, integrates Channel3 for market replacement prices, and runs on pure deterministic code where money math is never left to an LLM. Thank you!"*
+

@@ -7,9 +7,11 @@ const globalForPrisma = globalThis as unknown as {
 
 export const prisma =
   globalForPrisma.prisma ??
-  new PrismaClient({
-    log: process.env.NODE_ENV === "development" ? ["warn", "error"] : ["error"],
-  });
+  (process.env.DATABASE_URL
+    ? new PrismaClient({
+        log: process.env.NODE_ENV === "development" ? ["warn", "error"] : ["error"],
+      })
+    : (null as unknown as PrismaClient));
 
 if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;
 
@@ -96,7 +98,7 @@ let isPrismaAvailable: boolean | null = null;
 
 async function checkPrisma(): Promise<boolean> {
   if (isPrismaAvailable !== null) return isPrismaAvailable;
-  if (!process.env.DATABASE_URL) {
+  if (!process.env.DATABASE_URL || !prisma) {
     isPrismaAvailable = false;
     return false;
   }
