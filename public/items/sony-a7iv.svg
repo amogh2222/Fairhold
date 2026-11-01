@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#090d16"/>
+      <stop offset="100%" stop-color="#1e293b"/>
+    </linearGradient>
+    <radialGradient id="halo" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#38bdf8" stop-opacity="0.2"/>
+      <stop offset="100%" stop-color="#38bdf8" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="400" height="300" fill="url(#bgGrad)"/>
+  <circle cx="200" cy="150" r="120" fill="url(#halo)"/>
+  
+      <rect x="130" y="100" width="140" height="100" rx="14" fill="#1e293b" stroke="#38bdf8" stroke-width="3"/>
+      <circle cx="200" cy="150" r="32" fill="#0f172a" stroke="#38bdf8" stroke-width="4"/>
+      <circle cx="200" cy="150" r="20" fill="#38bdf8" fill-opacity="0.3"/>
+      <circle cx="192" cy="142" r="6" fill="#ffffff" fill-opacity="0.8"/>
+      <rect x="155" y="86" width="30" height="14" rx="4" fill="#38bdf8"/>
+      <circle cx="245" cy="115" r="5" fill="#ef4444"/>
+    
+  <rect x="20" y="225" width="360" height="55" rx="10" fill="#090d16" fill-opacity="0.9" stroke="#334155" stroke-width="1"/>
+  <text x="35" y="248" font-family="system-ui, -apple-system, sans-serif" font-size="13" font-weight="700" fill="#f8fafc">Sony Alpha A7 IV Body</text>
+  <text x="35" y="267" font-family="system-ui, -apple-system, sans-serif" font-size="11" font-weight="500" fill="#94a3b8">33MP Full-Frame • 4K 60p</text>
+</svg>

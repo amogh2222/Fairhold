@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" width="100%" height="100%">
+  <defs>
+    <radialGradient id="sensorGleam" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#1e1b4b"/>
+      <stop offset="70%" stop-color="#020617"/>
+      <stop offset="100%" stop-color="#090d16"/>
+    </radialGradient>
+    <linearGradient id="metalBezel" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#64748b"/>
+      <stop offset="50%" stop-color="#334155"/>
+      <stop offset="100%" stop-color="#1e293b"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Camera Body Background -->
+  <rect width="800" height="600" fill="#0f172a"/>
+  
+  <!-- Outer Magnesium Chassis -->
+  <rect x="150" y="100" width="500" height="420" rx="30" fill="#1e293b" stroke="#334155" stroke-width="4"/>
+  <rect x="220" y="60" width="140" height="45" rx="8" fill="#334155"/>
+  <circle x="600" y="140" r="15" fill="#dc2626"/>
+
+  <!-- Lens Mount Collar -->
+  <circle cx="400" cy="310" r="160" fill="url(#metalBezel)" stroke="#94a3b8" stroke-width="6"/>
+  <circle cx="400" cy="310" r="135" fill="#020617" stroke="#475569" stroke-width="4"/>
+
+  <!-- Gold Mount Contacts -->
+  <path d="M 330 435 Q 400 455 470 435" fill="none" stroke="#f59e0b" stroke-width="6" stroke-linecap="round"/>
+
+  <!-- Sensor Glass & Micro-array -->
+  <rect x="330" y="240" width="140" height="140" rx="4" fill="url(#sensorGleam)" stroke="#38bdf8" stroke-width="2"/>
+  <rect x="345" y="255" width="110" height="110" rx="2" fill="#020617" stroke="#60a5fa" stroke-width="1" stroke-dasharray="10,10"/>
+  
+  <!-- Condition Specific Artifacts -->
+  
+      <g id="pre_existing_mark">
+        <line x1="520" y1="230" x2="560" y2="250" stroke="#94a3b8" stroke-width="2" stroke-linecap="round"/>
+        <circle cx="540" cy="240" r="18" fill="none" stroke="#60a5fa" stroke-width="1.5" stroke-dasharray="3,3"/>
+        <text x="540" y="215" text-anchor="middle" font-family="sans-serif" font-size="11" font-weight="bold" fill="#60a5fa">Pre-existing Scuff (3mm)</text>
+      </g>
+    
+
+  <!-- Inspection Metadata Overlay -->
+  <rect x="30" y="530" width="740" height="45" rx="8" fill="#020617" fill-opacity="0.85" stroke="#1e293b" stroke-width="1"/>
+  <text x="50" y="558" font-family="monospace" font-size="12" font-weight="bold" fill="#f8fafc">Sony A7 IV - Return Inspection [RETURN]</text>
+  <text x="650" y="558" font-family="monospace" font-size="11" fill="#38bdf8">PRE_EXISTING</text>
+</svg>

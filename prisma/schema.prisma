@@ -1,0 +1,284 @@
+// Fairhold Prisma Schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Business {
+  id                    String      @id @default(cuid())
+  name                  String
+  slug                  String      @unique
+  currency              String      @default("USD")
+  contestWindowHours    Int         @default(24)
+  wearAndTearPolicy     String      @db.Text
+  aiConfidenceThreshold Float       @default(0.75)
+  chargeFeeAtPickup     Boolean     @default(false)
+  severityMinorPct      Float       @default(0.05)
+  severityModeratePct   Float       @default(0.15)
+  severityMajorPct      Float       @default(0.40)
+  createdAt             DateTime    @default(now())
+  updatedAt             DateTime    @updatedAt
+
+  owners                OwnerUser[]
+  items                 Item[]
+  bookings              Booking[]
+  disputes              Dispute[]
+}
+
+model OwnerUser {
+  id           String    @id @default(cuid())
+  businessId   String
+  business     Business  @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  email        String    @unique
+  passwordHash String
+  name         String
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+}
+
+model Item {
+  id                 String    @id @default(cuid())
+  businessId         String
+  business           Business  @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  name               String
+  category           String
+  description        String    @db.Text
+  dailyRate          Float
+  depositAmount      Float
+  replacementValue   Float
+  replacementSources String?   @db.Text // JSON string
+  shotList           String    @db.Text // JSON: array of { key, label, instructions }
+  rateCard           String    @db.Text // JSON: array of { damageType, price }
+  images             String    @db.Text // JSON: array of URLs
+  inService          Boolean   @default(true)
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+
+  bookings           Booking[]
+}
+
+model Booking {
+  id                   String                @id @default(cuid())
+  businessId           String
+  business             Business              @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  itemId               String
+  item                 Item                  @relation(fields: [itemId], references: [id])
+  renterName           String
+  renterEmail          String
+  renterToken          String                @unique // Signed token for secure renter access
+  startDate            DateTime
+  endDate              DateTime
+  dailyRate            Float
+  rentalDays           Int
+  rentalFee            Float
+  depositAmount        Float
+  totalHoldAmount      Float
+  status               String                @default("PENDING_PAYMENT")
+  // Status machine: PENDING_PAYMENT -> HELD -> CHECKED_OUT -> RETURNED -> INSPECTING -> PROPOSED -> (CONTESTED -> PROPOSED) -> SETTLED | CANCELLED | DISPUTED | FLAGGED
+  paypalOrderId        String?
+  honorEndsAt          DateTime?
+  authExpiresAt        DateTime?
+  scheduledReauthAt    DateTime?
+  finalChargedAmount   Float?
+  finalReleasedAmount  Float?
+  isDemoData           Boolean               @default(false)
+  createdAt            DateTime              @default(now())
+  updatedAt            DateTime              @updatedAt
+
+  authorizations       AuthorizationRecord[]
+  inspections          Inspection[]
+  proposals            SettlementProposal[]
+  captures             Capture[]
+  refunds              Refund[]
+  disputes             Dispute[]
+  auditEvents          AuditEvent[]
+}
+
+model AuthorizationRecord {
+  id              String    @id @default(cuid())
+  bookingId       String
+  booking         Booking   @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  authorizationId String
+  status          String
+  amount          Float
+  honorEndsAt     DateTime
+  expiresAt       DateTime
+  supersededById  String?
+  createdAt       DateTime  @default(now())
+}
+
+model Inspection {
+  id                    String         @id @default(cuid())
+  bookingId             String
+  booking               Booking        @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  type                  String         // CHECKOUT or RETURN
+  completedAt           DateTime?
+  qaStatus              String         @default("PENDING") // PENDING, PASSED, OVERRIDDEN, FAILED
+  qaNotes               String?
+  renterAcknowledgedAt  DateTime?
+  renterTypedName       String?
+  renterSignatureHash   String?
+  createdAt             DateTime       @default(now())
+  updatedAt             DateTime       @updatedAt
+
+  photos                Photo[]
+  baselineMarks         BaselineMark[]
+  findings              Finding[]
+}
+
+model Photo {
+  id           String      @id @default(cuid())
+  inspectionId String
+  inspection   Inspection  @relation(fields: [inspectionId], references: [id], onDelete: Cascade)
+  shotKey      String
+  storageKey   String
+  url          String
+  sha256       String
+  width        Int         @default(1920)
+  height       Int         @default(1080)
+  qaScore      Float       @default(1.0)
+  qaIssues     String      @default("[]") // JSON string of issues
+  qaRetakeTip  String?
+  createdAt    DateTime    @default(now())
+}
+
+model BaselineMark {
+  id           String      @id @default(cuid())
+  inspectionId String
+  inspection   Inspection  @relation(fields: [inspectionId], references: [id], onDelete: Cascade)
+  shotKey      String
+  box          String      // JSON: [ymin, xmin, ymax, xmax] (0-1000 scale)
+  description  String
+  severity     String      @default("minor") // minor, moderate, major
+  createdAt    DateTime    @default(now())
+}
+
+model Finding {
+  id                      String      @id @default(cuid())
+  inspectionId            String
+  inspection              Inspection  @relation(fields: [inspectionId], references: [id], onDelete: Cascade)
+  shotKey                 String
+  box                     String      // JSON: [ymin, xmin, ymax, xmax] (0-1000 scale)
+  classification          String      // NEW_DAMAGE, PRE_EXISTING, WEAR_AND_TEAR, DIRT_OR_LIGHTING, MISSING_PART, UNCERTAIN
+  matchedBaselineMarkId   String?
+  severity                String      @default("minor") // minor, moderate, major
+  confidence              Float       @default(0.9)
+  explanation             String      @db.Text
+  isChargeable            Boolean     @default(false)
+  chargeAmount            Float       @default(0)
+  ownerOverrideChargeable Boolean?
+  ownerOverrideReason     String?
+  createdAt               DateTime    @default(now())
+}
+
+model SettlementProposal {
+  id                  String        @id @default(cuid())
+  bookingId           String
+  booking             Booking       @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  status              String        @default("DRAFT") // DRAFT, PENDING_RENTER, ACCEPTED, CONTESTED, AUTO_ACCEPTED, SETTLED
+  lines               String        @db.Text // JSON: array of charge lines with formula & inputs
+  totalDamageAmount   Float         @default(0)
+  rentalFeeAmount     Float
+  totalToCapture      Float
+  totalToRelease      Float
+  contestWindowEndsAt DateTime
+  renterDecisionAt    DateTime?
+  renterComment       String?
+  createdAt           DateTime      @default(now())
+  updatedAt           DateTime      @updatedAt
+
+  contestItems        ContestItem[]
+}
+
+model ContestItem {
+  id                 String             @id @default(cuid())
+  proposalId         String
+  proposal           SettlementProposal @relation(fields: [proposalId], references: [id], onDelete: Cascade)
+  findingId          String
+  renterComment      String             @db.Text
+  renterPhotoUrls    String             @default("[]") // JSON array
+  aiReassessment     String?            // keep, reduce, remove
+  aiReasoning        String?            @db.Text
+  ownerFinalDecision String?            // upheld, reduced, dropped
+  ownerFinalAmount   Float?
+  createdAt          DateTime           @default(now())
+}
+
+model Capture {
+  id               String    @id @default(cuid())
+  bookingId        String
+  booking          Booking   @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  paypalCaptureId  String
+  amount           Float
+  finalCapture     Boolean   @default(true)
+  createdAt        DateTime  @default(now())
+}
+
+model Refund {
+  id               String    @id @default(cuid())
+  bookingId        String
+  booking          Booking   @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  paypalRefundId   String
+  captureId        String
+  amount           Float
+  reason           String?
+  createdAt        DateTime  @default(now())
+}
+
+model Dispute {
+  id                    String    @id @default(cuid())
+  businessId            String
+  business              Business  @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  bookingId             String?
+  booking               Booking?  @relation(fields: [bookingId], references: [id])
+  paypalDisputeId       String    @unique
+  sellerTransactionId   String
+  reason                String
+  stage                 String    @default("INQUIRY")
+  status                String    @default("WAITING_FOR_SELLER_RESPONSE")
+  amount                Float
+  currency              String    @default("USD")
+  evidencePdfUrl        String?
+  submittedAt           DateTime?
+  outcome               String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+}
+
+model WebhookEvent {
+  id            String    @id @default(cuid())
+  paypalEventId String    @unique
+  eventType     String
+  resourceType  String
+  summary       String?
+  payload       String    @db.Text
+  processed     Boolean   @default(false)
+  error         String?
+  createdAt     DateTime  @default(now())
+}
+
+model AuditEvent {
+  id         String    @id @default(cuid())
+  bookingId  String?
+  booking    Booking?  @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  actor      String    // SYSTEM, OWNER, RENTER, PAYPAL
+  type       String
+  payload    String    @db.Text // JSON details
+  createdAt  DateTime  @default(now())
+}
+
+model JobQueue {
+  id         String    @id @default(cuid())
+  name       String
+  payload    String    @db.Text
+  status     String    @default("PENDING") // PENDING, RUNNING, COMPLETED, FAILED
+  attempts   Int       @default(0)
+  runAt      DateTime  @default(now())
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+}
